@@ -30,36 +30,32 @@
             width: 300px;
             position: relative;
             font-size: 0;
-        }
-
-        .drag-box {
             overflow: hidden;
         }
 
         #drag {
-            width: 300px;
-            height: 300px;
+            width: 100px;
+            height: 100px;
             background: transparent;
-            position:absolute;
+            position: absolute;
             top: 50%;
             left: 50%;
-            transform:translateX(-50%) translateY(-50%);
-            -moz-transform:translateX(-50%) translateY(-50%);
-            -webkit-transform:translateX(-50%) translateY(-50%);
-            -ms-transform:translateX(-50%) translateY(-50%);
+            user-select: none;
+            transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -ms-transform: translateX(-50%) translateY(-50%);
             border: 1px dashed #fff;
             box-sizing: border-box;
-            outline: rgba(0, 0, 0, .5) solid 100px;
+            outline: rgba(0, 0, 0, .5) solid 400px;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
         <div class="box">
-            <img src="./images/yamap.jpg" alt="">
-            <div class="drag-box">
-                <div id="drag"></div>
-            </div>
+            <img src="./images/yamap.jpg" ondragstart="return false" alt="">
+            <div id="drag"></div>
         </div>
     </div>
     <script>
@@ -67,8 +63,6 @@
 
         // 鼠标点击
         drag.onmousedown = function(event) {
-            console.log(event.clientX);
-            console.log(drag.offsetLeft);
             var ev = event || window.event;
             event.stopPropagation();
             var disX = ev.clientX - drag.offsetLeft;
