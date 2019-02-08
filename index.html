@@ -60,33 +60,40 @@
     </div>
     <script>
         var drag = document.getElementById('drag');
+        var box = document.getElementsByClassName('box')[0];
 
-        // 鼠标点击
+        // 鼠标点击裁剪框
         drag.onmousedown = function(event) {
             var ev = event || window.event;
             event.stopPropagation();
             var disX = ev.clientX - drag.offsetLeft;
             var disY = ev.clientY - drag.offsetTop;
-            document.onmousemove = function(event) {
+            // 鼠标经过容器
+            box.onmousemove = function(event) {
                 var ev = event || window.event;
                 drag.style.left = ev.clientX - disX + "px";
                 drag.style.top = ev.clientY - disY + "px";
             };
         };
 
-        // 鼠标经过
+        // 鼠标经过裁剪框
         drag.onmouseover = function() {
             drag.style.cursor = 'move';
         }
 
-        // 鼠标松开
+        // 鼠标松开裁剪框
         drag.onmouseup = function() {
-            document.onmousemove = null;
+            box.onmousemove = null;
         };
 
-        // 鼠标移出
+        // 鼠标移出裁剪框
         drag.onmouseout = function() {
             drag.style.cursor = 'default';
+        }
+
+        // 鼠标移出容器
+        box.onmouseout = function() {
+            box.onmouseover = null;
         }
     </script>
 </body>
