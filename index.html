@@ -126,7 +126,7 @@
             align-items: center;
         }
 
-        .btn-clip {
+        .clip-btn {
             width: 100%;
             line-height: 40px;
             font-size: 16px;
@@ -137,10 +137,10 @@
             cursor: pointer;
             opacity: .9;
         }
-        .btn-clip:active {
+        .clip-btn:active {
             opacity: 1 !important;
         }
-        .btn-clip:hover {
+        .clip-btn:hover {
             opacity: .8;
         }
     </style>
@@ -148,7 +148,7 @@
 <body>
     <div class="wrapper">
         <div class="box">
-            <img src="./images/yamap.jpg" ondragstart="return false" alt="">
+            <img src="./images/yamap.jpg" class="img" ondragstart="return false" alt="">
             <div id="drag">
                 <div class="dot-box">
                     <div class="up dot"></div>
@@ -163,13 +163,31 @@
             </div>
         </div>
         <div class="btn-box">
-            <div class="btn-clip">裁剪</div>
+            <div class="clip-btn">裁剪</div>
         </div>
     </div>
     <script>
         var drag = document.getElementById('drag');
         var box = document.getElementsByClassName('box')[0];
         var dots =document.getElementsByClassName('dot');
+        var sx = 0,
+            sy = 0,
+            swidth = 0,
+            sheight = 0,
+            canvas = document.createElement('canvas'),
+            context = canvas.getContext('2d'),
+            clipBtn = document.getElementsByClassName('clip-btn')[0],
+            wrapperObj = document.getElementsByClassName('wrapper')[0],
+            imgObj = document.getElementsByClassName('img')[0];
+
+        // 裁剪按钮
+        clipBtn.addEventListener('click', function() {
+            canvas.width = imgObj.width;
+            canvas.height = imgObj.height;
+            context.drawImage(imgObj, 0, 0, imgObj.width, imgObj.height);
+            // context.drawImage(imgObj, sx, sy, swidth, sheight, 0, 0, imgObj.width, imgObj.height);
+            wrapperObj.appendChild(canvas);
+        });
 
         // 鼠标点击裁剪框
         drag.onmousedown = function(event) {
