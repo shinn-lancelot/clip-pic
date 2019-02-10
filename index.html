@@ -114,6 +114,35 @@
             bottom: -5px;
             right: -5px;
         }
+
+        .btn-box {
+            margin-top: 10px;
+            width: 300px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-clip {
+            width: 100%;
+            line-height: 40px;
+            font-size: 16px;
+            background: rgb(85, 189, 59);
+            text-align: center;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: .9;
+        }
+        .btn-clip:active {
+            opacity: 1 !important;
+        }
+        .btn-clip:hover {
+            opacity: .8;
+        }
     </style>
 </head>
 <body>
@@ -132,6 +161,9 @@
                     <div class="right-down dot"></div>
                 </div>
             </div>
+        </div>
+        <div class="btn-box">
+            <div class="btn-clip">裁剪</div>
         </div>
     </div>
     <script>
