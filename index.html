@@ -180,12 +180,24 @@
             wrapperObj = document.getElementsByClassName('wrapper')[0],
             imgObj = document.getElementsByClassName('img')[0];
 
+        window.onload = function() {
+            if (imgObj.width <= imgObj.height) {
+                sy = (imgObj.height - imgObj.width) / 2;
+                swidth = imgObj.width;
+            } else {
+                sx = (imgObj.width - imgObj.height) / 2;
+                swidth = imgObj.height;
+            }
+            sheight = swidth;
+        }
+
         // 裁剪按钮
         clipBtn.addEventListener('click', function() {
+            console.log(sx + '|' + sy + '|' + swidth + '|' + sheight);
             canvas.width = imgObj.width;
             canvas.height = imgObj.height;
-            context.drawImage(imgObj, 0, 0, imgObj.width, imgObj.height);
-            // context.drawImage(imgObj, sx, sy, swidth, sheight, 0, 0, imgObj.width, imgObj.height);
+            context.drawImage(imgObj, sx, sy, swidth, sheight, 0, 0, imgObj.width, imgObj.height);
+            wrapperObj.innerHTML = '';
             wrapperObj.appendChild(canvas);
         });
 
