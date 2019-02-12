@@ -178,25 +178,38 @@
             context = canvas.getContext('2d'),
             clipBtn = document.getElementsByClassName('clip-btn')[0],
             wrapperObj = document.getElementsByClassName('wrapper')[0],
-            imgObj = document.getElementsByClassName('img')[0];
+            imgObj = document.getElementsByClassName('img')[0],
+            widthScale = 1,
+            heightScale = 1,
+            img = new Image();
+        img.src = './images/yamap.jpg';
 
         window.onload = function() {
             if (imgObj.width <= imgObj.height) {
                 sy = (imgObj.height - imgObj.width) / 2;
-                swidth = imgObj.width;
             } else {
                 sx = (imgObj.width - imgObj.height) / 2;
-                swidth = imgObj.height;
             }
-            sheight = swidth;
+            widthScale = img.width / imgObj.width;
+            heightScale = img.height / imgObj.height;
         }
 
         // 裁剪按钮
         clipBtn.addEventListener('click', function() {
+            if (drag.style.left) {
+                sx = drag.style.left.replace(/px/g, '');
+            }
+            if (drag.style.top) {
+                sy = drag.style.top.replace(/px/g, '');
+            }
+            swidth = drag.offsetWidth;
+            sheight = drag.offsetHeight;
+
             console.log(sx + '|' + sy + '|' + swidth + '|' + sheight);
-            canvas.width = imgObj.width;
-            canvas.height = imgObj.height;
-            context.drawImage(imgObj, sx, sy, swidth, sheight, 0, 0, imgObj.width, imgObj.height);
+            console.log(0 + '|' + 0 + '|' + imgObj.width + '|' + imgObj.height);
+            canvas.width = swidth;
+            canvas.height = sheight;
+            context.drawImage(imgObj, sx * widthScale, sy * heightScale, swidth * widthScale, sheight *  heightScale, 0, 0, imgObj.width, imgObj.height);
             wrapperObj.innerHTML = '';
             wrapperObj.appendChild(canvas);
         });
