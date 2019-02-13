@@ -55,7 +55,6 @@
             user-select: none;
             border: 1px dashed #fff;
             box-sizing: border-box;
-            outline: rgba(0, 0, 0, .5) solid 500px;
         }
 
         .dot-box {
@@ -76,46 +75,46 @@
         }
         .up {
             cursor: n-resize;
-            top: -5px;
+            top: -5.5px;
         }
 
         .down {
             cursor: s-resize;
-            bottom: -5px;
+            bottom: -5.5px;
         }
 
         .left {
             cursor: w-resize;
-            left: -5px;
+            left: -5.5px;
         }
 
         .right {
             cursor: e-resize;
-            right: -5px;
+            right: -5.5px;
         }
 
         .left-up {
             cursor: nw-resize;
-            top: -5px;
-            left: -5px;
+            top: -5.5px;
+            left: -5.5px;
         }
 
         .right-up {
             cursor: ne-resize;
-            top: -5px;
-            right: -5px;
+            top: -5.5px;
+            right: -5.5px;
         }
 
         .left-down {
             cursor: sw-resize;
-            bottom: -5px;
-            left: -5px;
+            bottom: -5.5px;
+            left: -5.5px;
         }
 
         .right-down {
             cursor: se-resize;
-            bottom: -5px;
-            right: -5px;
+            bottom: -5.5px;
+            right: -5.5px;
         }
 
         .btn-box {
@@ -234,6 +233,8 @@
                 dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
                 dotLeft.style.top = (imgObj.width - 10) / 2 + 'px';
                 dotRight.style.top = (imgObj.width - 10) / 2 + 'px';
+                // 设置剪裁框外阴影（遮罩层）
+                drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.height + 'px';
             } else {
                 drag.style.height = imgObj.height + 'px';
                 drag.style.width = drag.style.height;
@@ -241,6 +242,8 @@
                 dotDown.style.left = (imgObj.height - 10) / 2 + 'px';
                 dotLeft.style.top = (imgObj.height - 10) / 2 + 'px';
                 dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
+                // 设置剪裁框外阴影（遮罩层）
+                drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.width + 'px';
             }
 
             // 获取初始裁剪坐标原点
