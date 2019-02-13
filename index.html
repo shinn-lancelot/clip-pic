@@ -40,6 +40,10 @@
             align-items: center;
         }
 
+        .title {
+            margin: 0 auto 20px;
+        }
+
         .clip-img {
             width: 100%;
         }
@@ -163,6 +167,7 @@
 <body>
     <div class="loading">loading...</div>
     <div class="wrapper">
+        <div class="title">An example of clipping a picture with canvas. <a href="https://github.com/shinn-lancelot/clip-pic">Github Repository</a></div>
         <div class="box">
             <img class="clip-img" ondragstart="return false" alt="">
             <div id="drag">
@@ -184,6 +189,7 @@
     </div>
     <script>
         var drag = document.getElementById('drag'),
+            title = document.getElementsByClassName('title')[0],
             box = document.getElementsByClassName('box')[0],
             btnBox = document.getElementsByClassName('btn-box')[0],
             dots = document.getElementsByClassName('dot'),
@@ -204,11 +210,16 @@
             widthScale = 1,
             heightScale = 1,
             imgPath = './images/yamap.jpg',
-            img = new Image();
+            img = new Image(),
+            boxWidth = 300;
             
         // 设置显示盒子的宽度
-        box.style.width = 300 + 'px';
+        if (boxWidth > document.body.clientWidth) {
+            boxWidth = document.body.clientWidth;
+        }
+        box.style.width = boxWidth + 'px';
         btnBox.style.width = box.style.width;
+        title.style.width = box.style.width;
         // 设置需要裁剪的图片对象的源，用于裁剪查看
         imgObj.src = imgPath;
         // 设置创建的图片对象的源，用于获取图片原尺寸
@@ -296,11 +307,40 @@
             };
         };
 
+        // 开始触碰裁剪框
+        drag.ontouchstart = function(event) {
+            event.stopPropagation();
+            var ev = event || window.event;
+            var distanceX = ev.touches[0].clientX - drag.offsetLeft;
+            var distanceY = ev.touches[0].clientY - drag.offsetTop;
+            var left = 0;
+            var top = 0;
+            // 触碰后移动裁剪框
+            box.ontouchmove = function(event) {
+                var e = event || window.event;
+                left = e.touches[0].clientX - distanceX;
+                top = e.touches[0].clientY - distanceY;
+                if (left <= 0) {
+                    left = 0;
+                } else if (left >= (box.offsetWidth - drag.offsetWidth)) {
+                    left = box.offsetWidth - drag.offsetWidth;
+                }
+                if (top <= 0) {
+                    top = 0;
+                } else if (top >= (box.offsetHeight - drag.offsetHeight)) {
+                    top = box.offsetHeight - drag.offsetHeight;
+                }
+                drag.style.left = left + 'px';
+                drag.style.top = top + 'px';
+            };
+        };
+
         // 鼠标经过裁剪框
         drag.addEventListener('mouseover', dragMouseOver);
 
-        // 鼠标松开裁剪框
+        // 鼠标、触屏松开裁剪框
         drag.addEventListener('mouseup', dragMouseUp);
+        drag.addEventListener('touchend', dragMouseUp);
 
         // 鼠标移出裁剪框
         drag.addEventListener('mouseout', dragMouseOut);
