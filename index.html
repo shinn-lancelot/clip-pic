@@ -235,6 +235,8 @@
                 dotRight.style.top = (imgObj.width - 10) / 2 + 'px';
                 // 设置剪裁框外阴影（遮罩层）
                 drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.height + 'px';
+                drag.style.left = 0 + 'px';
+                drag.style.top = ((imgObj.height - imgObj.width) / 2) + 'px';
             } else {
                 drag.style.height = imgObj.height + 'px';
                 drag.style.width = drag.style.height;
@@ -244,6 +246,8 @@
                 dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
                 // 设置剪裁框外阴影（遮罩层）
                 drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.width + 'px';
+                drag.style.left = ((imgObj.width - imgObj.height) / 2) + 'px';
+                drag.style.top = 0 + 'px';
             }
 
             // 获取初始裁剪坐标原点
@@ -262,27 +266,56 @@
         clipBtn.addEventListener('click', clip);
 
         document.onkeydown = function(ev) {
-            var e = ev || window.event;
-            var key = e.keyCode;
+            var e = ev || window.event,
+                key = e.keyCode,
+                position = 0,
+                deltaWidth = 0,
+                deltaHeight = 0;
             switch (key) {
                 // 按了←键
                 case 37:
+                    position = drag.style.left.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.left = position + 'px';
                     break;
                 // 按了↑键
                 case 38:
+                    position = drag.style.top.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.top = position + 'px';
                     break;
                 // 按了→键
                 case 39:
+                    position = drag.style.left.replace(/px/g, '');
+                    deltaWidth = imgObj.width - drag.style.width.replace(/px/g, '');
+                    position++;
+                    if (position > deltaWidth) {
+                        position = deltaWidth;
+                    }
+                    drag.style.left = position + 'px';
                     break;
                 // 按了↓键
                 case 40:
+                    position = drag.style.top.replace(/px/g, '');
+                    deltaHeight = imgObj.height - drag.style.height.replace(/px/g, '');
+                    position++;
+                    if (position > deltaHeight) {
+                        position = deltaHeight;
+                    }
+                    drag.style.top = position + 'px';
                     break;
                 // 按了enter键
                 case 13:
                     clip();
                     break;
                 default:
-                    console.log(key);
+                    console.log('keycode = ' + key);
             }
         }
 
