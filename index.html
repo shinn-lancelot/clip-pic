@@ -450,7 +450,7 @@
             newImg.height = sheight;
             box.innerHTML = '';
             box.appendChild(newImg);
-            btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
+            btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href.split('\?')[0] + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
         }
     </script>
 </body>
