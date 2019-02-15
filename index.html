@@ -210,7 +210,8 @@
             heightScale = 1,
             imgPath = './images/yamap.jpg',
             img = new Image(),
-            boxWidth = 300;
+            boxWidth = 300,
+            cliped = false;
             
         // 设置显示盒子的宽度
         if (boxWidth > document.body.clientWidth) {
@@ -404,6 +405,10 @@
         }
 
         function clip() {
+            if (cliped) {
+                return;
+            }
+            cliped = true;
             if (drag.style.left) {
                 sx = drag.style.left.replace(/px/g, '');
             }
