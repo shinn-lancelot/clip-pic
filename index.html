@@ -118,7 +118,7 @@
         }
 
         .btn-box {
-            margin-top: 10px;
+            margin-top: 20px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -213,7 +213,7 @@
             boxWidth = 300, // 页面显示盒子的宽度（px）
             cliped = false, // 是否已裁剪
             clipConfig = {  // 裁剪配置对象
-                scale: 3 / 2,   // 设定初始裁剪框比例（宽 / 高）
+                scale: '',   // 设定初始裁剪框比例（宽 / 高）
                 fix: true   // 是否固定裁剪框比例
             },
             imgScale;   // 图片自身的比例（宽 / 高）
@@ -276,6 +276,9 @@
 
         // 裁剪按钮
         clipBtn.addEventListener('click', clip);
+
+        // 双击裁剪框执行剪裁
+        drag.addEventListener('dblclick', clip);
 
         document.onkeydown = function(ev) {
             var e = ev || window.event,
@@ -445,8 +448,9 @@
             newImg.src = canvas.toDataURL('image/jpeg', 1);
             newImg.width = swidth;
             newImg.height = sheight;
-            wrapperObj.innerHTML = '';
-            wrapperObj.appendChild(newImg);
+            box.innerHTML = '';
+            box.appendChild(newImg);
+            btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
         }
     </script>
 </body>
