@@ -118,7 +118,7 @@
         }
 
         .btn-box {
-            margin-top: 10px;
+            margin-top: 20px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -206,12 +206,23 @@
             clipBtn = document.getElementsByClassName('clip-btn')[0],
             wrapperObj = document.getElementsByClassName('wrapper')[0],
             imgObj = document.getElementsByClassName('clip-img')[0],
-            widthScale = 1,
-            heightScale = 1,
+            widthScale = 1, // 实际图片宽度 / 显示图片宽度
+            heightScale = 1,    // 实际图片高度 / 显示图片高度
             imgPath = './images/yamap.jpg',
             img = new Image(),
-            boxWidth = 300;
+            boxWidth = 300, // 页面显示盒子的宽度（px）
+            cliped = false, // 是否已裁剪
+            clipConfig = {  // 裁剪配置对象
+                scale: '',   // 设定初始裁剪框比例（宽 / 高）
+                fix: true   // 是否固定裁剪框比例
+            },
+            imgScale;   // 图片自身的比例（宽 / 高）
             
+        // 裁剪框比例不存在时，设定默认比例
+        if (!clipConfig.scale) {
+            clipConfig.scale = 1 / 1;
+        }
+
         // 设置显示盒子的宽度
         if (boxWidth > document.body.clientWidth) {
             boxWidth = document.body.clientWidth;
@@ -225,30 +236,35 @@
         img.src = imgPath;
 
         window.onload = function() {
-            // 根据图片尺寸初始化剪裁框
-            if (imgObj.width <= imgObj.height) {
-                drag.style.width = imgObj.width + 'px';
-                drag.style.height = drag.style.width;
-                dotUp.style.left = (imgObj.width - 10) / 2 + 'px';
-                dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
-                dotLeft.style.top = (imgObj.width - 10) / 2 + 'px';
-                dotRight.style.top = (imgObj.width - 10) / 2 + 'px';
-                // 设置剪裁框外阴影（遮罩层）
-                drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.height + 'px';
-            } else {
+            imgScale = imgObj.width / imgObj.height;
+            if (imgScale >= clipConfig.scale) {
+                drag.style.top = 0;
+                drag.style.left = ((imgObj.width - imgObj.height * clipConfig.scale) / 2) + 'px';
                 drag.style.height = imgObj.height + 'px';
-                drag.style.width = drag.style.height;
-                dotUp.style.left = (imgObj.height - 10) / 2 + 'px';
-                dotDown.style.left = (imgObj.height - 10) / 2 + 'px';
+                drag.style.width = (imgObj.height * clipConfig.scale) + 'px';
+
+                dotUp.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
+                dotDown.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
                 dotLeft.style.top = (imgObj.height - 10) / 2 + 'px';
                 dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
-                // 设置剪裁框外阴影（遮罩层）
-                drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + imgObj.width + 'px';
+            } else {
+                drag.style.left = 0;
+                drag.style.top = ((imgObj.height - imgObj.width / clipConfig.scale) / 2) + 'px';
+                drag.style.width = imgObj.width + 'px';
+                drag.style.height = (imgObj.width / clipConfig.scale) + 'px';
+                
+                dotUp.style.left = (imgObj.width - 10) / 2 + 'px';
+                dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
+                dotLeft.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
+                dotRight.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
             }
 
-            // 获取初始裁剪坐标原点
+            // 获取裁剪坐标原点
             sx = (imgObj.width - drag.offsetWidth) / 2;
             sy = (imgObj.height - drag.offsetHeight) / 2;
+
+            // 设定剪裁框外阴影（遮罩）
+            drag.style.outline = 'rgba(0, 0, 0, .5) solid ' + (imgObj.width > imgObj.height ? imgObj.width : imgObj.height) + 'px';
 
             // 获取显示图与实际图的宽高缩放比
             widthScale = img.width / imgObj.width;
@@ -266,28 +282,60 @@
         // 裁剪按钮
         clipBtn.addEventListener('click', clip);
 
+        // 双击裁剪框执行剪裁
+        drag.addEventListener('dblclick', clip);
+
         document.onkeydown = function(ev) {
-            var e = ev || window.event;
-            var key = e.keyCode;
+            var e = ev || window.event,
+                key = e.keyCode,
+                position = 0,
+                deltaWidth = 0,
+                deltaHeight = 0;
             switch (key) {
                 // 按了←键
                 case 37:
+                    position = drag.style.left.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.left = position + 'px';
                     break;
                 // 按了↑键
                 case 38:
+                    position = drag.style.top.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.top = position + 'px';
                     break;
                 // 按了→键
                 case 39:
+                    position = drag.style.left.replace(/px/g, '');
+                    deltaWidth = imgObj.width - drag.style.width.replace(/px/g, '');
+                    position++;
+                    if (position > deltaWidth) {
+                        position = deltaWidth;
+                    }
+                    drag.style.left = position + 'px';
                     break;
                 // 按了↓键
                 case 40:
+                    position = drag.style.top.replace(/px/g, '');
+                    deltaHeight = imgObj.height - drag.style.height.replace(/px/g, '');
+                    position++;
+                    if (position > deltaHeight) {
+                        position = deltaHeight;
+                    }
+                    drag.style.top = position + 'px';
                     break;
                 // 按了enter键
                 case 13:
                     clip();
                     break;
                 default:
-                    console.log(key);
+                    console.log('keycode = ' + key);
             }
         }
 
@@ -376,26 +424,38 @@
         }
 
         function clip() {
+            if (cliped) {
+                return;
+            }
+            cliped = true;
             if (drag.style.left) {
                 sx = drag.style.left.replace(/px/g, '');
             }
             if (drag.style.top) {
                 sy = drag.style.top.replace(/px/g, '');
             }
+            // 根据裁剪框获取裁剪尺寸
             swidth = drag.offsetWidth;
             sheight = drag.offsetHeight;
 
-            console.log(sx + '|' + sy + '|' + swidth + '|' + sheight);
-            console.log(0 + '|' + 0 + '|' + imgObj.width + '|' + imgObj.height);
-            canvas.width = swidth;
-            canvas.height = sheight;
-            context.drawImage(imgObj, sx * widthScale, sy * heightScale, swidth * widthScale, sheight *  heightScale, 0, 0, swidth, sheight);
+            console.log('dragObj：sx = ' + sx + ' | sy = ' + sy + ' | swidth = ' + swidth + ' | sheight = ' + sheight);
+            console.log('imgObj：x = ' + 0 + ' | y = ' + 0 + ' | width = ' + imgObj.width + ' | height = ' + imgObj.height);
+            console.log('newImg(after clip)：width = ' + swidth * widthScale + ' | height = ' + sheight * heightScale);
+            console.log('img(before clip)：width = ' + imgObj.width * widthScale + ' | height = ' + imgObj.height * heightScale);
+            
+            // 裁剪时对尺寸根据比例还原，基于原尺寸裁剪
+            canvas.width = swidth * widthScale;
+            canvas.height = sheight * widthScale;
+            context.drawImage(imgObj, sx * widthScale, sy * heightScale, swidth * widthScale, sheight *  heightScale, 0, 0, swidth * widthScale, sheight * heightScale);
+
+            // 图片展示时，根据裁剪框尺寸展示（不按剪裁的尺寸展示）
             var newImg = new Image();
-            newImg.src = canvas.toDataURL('image/jpeg');
+            newImg.src = canvas.toDataURL('image/jpeg', 1);
             newImg.width = swidth;
             newImg.height = sheight;
-            wrapperObj.innerHTML = '';
-            wrapperObj.appendChild(newImg);
+            box.innerHTML = '';
+            box.appendChild(newImg);
+            btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href.split('\?')[0] + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
         }
     </script>
 </body>
