@@ -191,6 +191,7 @@
             title = document.getElementsByClassName('title')[0],
             box = document.getElementsByClassName('box')[0],
             btnBox = document.getElementsByClassName('btn-box')[0],
+            dotBox = document.getElementsByClassName('dot-box')[0],
             dots = document.getElementsByClassName('dot'),
             dotUp = document.getElementsByClassName('up')[0],
             dotDown = document.getElementsByClassName('down')[0],
@@ -276,14 +277,16 @@
 
         // 遍历裁剪框缩放点对象
         for (var i = 0; i < dots.length; i++) {
-
+            dots[i].addEventListener('click', function() {
+                console.log(this);
+            });
         }
 
         // 裁剪按钮
-        clipBtn.addEventListener('click', clip);
+        clipBtn.addEventListener('click', clip.bind(this));
 
         // 双击裁剪框执行剪裁
-        drag.addEventListener('dblclick', clip);
+        drag.addEventListener('dblclick', clip.bind(this));
 
         document.onkeydown = function(ev) {
             var e = ev || window.event,
@@ -332,7 +335,7 @@
                     break;
                 // 按了enter键
                 case 13:
-                    clip();
+                    clip(e);
                     break;
                 default:
                     console.log('keycode = ' + key);
@@ -423,7 +426,11 @@
             drag.style.cursor = 'default';
         }
 
-        function clip() {
+        function clip(e) {
+            // 若未双击事件，且目标非裁剪框时直接返回
+            if (e.type == 'dblclick' && e.target != dotBox) {
+                return;
+            }
             if (cliped) {
                 return;
             }
