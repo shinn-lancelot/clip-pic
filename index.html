@@ -55,6 +55,7 @@
             user-select: none;
             border: 1px dashed #fff;
             box-sizing: border-box;
+            cursor: move;
         }
 
         .dot-box {
@@ -285,66 +286,6 @@
             });
         }
 
-        // 裁剪按钮
-        clipBtn.addEventListener('click', clip.bind(this));
-
-        // 双击裁剪框执行剪裁
-        drag.addEventListener('dblclick', clip.bind(this));
-
-        document.onkeydown = function(ev) {
-            var e = ev || window.event,
-                key = e.keyCode,
-                position = 0,
-                deltaWidth = 0,
-                deltaHeight = 0;
-            switch (key) {
-                // 按了←键
-                case 37:
-                    position = drag.style.left.replace(/px/g, '');
-                    position--;
-                    if (position < 0) {
-                        position = 0;
-                    }
-                    drag.style.left = position + 'px';
-                    break;
-                // 按了↑键
-                case 38:
-                    position = drag.style.top.replace(/px/g, '');
-                    position--;
-                    if (position < 0) {
-                        position = 0;
-                    }
-                    drag.style.top = position + 'px';
-                    break;
-                // 按了→键
-                case 39:
-                    position = drag.style.left.replace(/px/g, '');
-                    deltaWidth = imgObj.width - drag.style.width.replace(/px/g, '');
-                    position++;
-                    if (position > deltaWidth) {
-                        position = deltaWidth;
-                    }
-                    drag.style.left = position + 'px';
-                    break;
-                // 按了↓键
-                case 40:
-                    position = drag.style.top.replace(/px/g, '');
-                    deltaHeight = imgObj.height - drag.style.height.replace(/px/g, '');
-                    position++;
-                    if (position > deltaHeight) {
-                        position = deltaHeight;
-                    }
-                    drag.style.top = position + 'px';
-                    break;
-                // 按了enter键
-                case 13:
-                    clip(e);
-                    break;
-                default:
-                    console.log('keycode = ' + key);
-            }
-        }
-
         // 鼠标点击裁剪框
         drag.onmousedown = function(event) {
             event.stopPropagation();
@@ -415,32 +356,68 @@
             };
         };
 
-        // 鼠标经过裁剪框
-        drag.addEventListener('mouseover', dragMouseOver);
-
-        // 鼠标、触屏松开裁剪框
-        drag.addEventListener('mouseup', dragMouseUp);
-        drag.addEventListener('touchend', dragMouseUp);
-
-        // 鼠标移出裁剪框
-        drag.addEventListener('mouseout', dragMouseOut);
-
-        // 鼠标移出容器
-        box.onmouseout = function() {
-            box.onmouseover = null;
+        drag.addEventListener('mouseup', cancelBoxMove);
+        drag.addEventListener('touchend', cancelBoxMove);
+        drag.addEventListener('mouseout', cancelBoxMove);
+        function cancelBoxMove() {
+            box.onmousemove = null
         }
 
-        function dragMouseOver() {
-            drag.style.cursor = 'move';
-        }
-
-        function dragMouseUp() {
-            box.onmousemove = null;
-        };
-
-        function dragMouseOut() {
-            box.onmousemove = null;
-            drag.style.cursor = 'default';
+        // 裁剪按钮、双击裁剪框、enter键裁剪
+        clipBtn.addEventListener('click', clip.bind(this));
+        drag.addEventListener('dblclick', clip.bind(this));
+        document.onkeydown = function(ev) {
+            var e = ev || window.event,
+                key = e.keyCode,
+                position = 0,
+                deltaWidth = 0,
+                deltaHeight = 0;
+            switch (key) {
+                // 按了←键
+                case 37:
+                    position = drag.style.left.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.left = position + 'px';
+                    break;
+                // 按了↑键
+                case 38:
+                    position = drag.style.top.replace(/px/g, '');
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    drag.style.top = position + 'px';
+                    break;
+                // 按了→键
+                case 39:
+                    position = drag.style.left.replace(/px/g, '');
+                    deltaWidth = imgObj.width - drag.style.width.replace(/px/g, '');
+                    position++;
+                    if (position > deltaWidth) {
+                        position = deltaWidth;
+                    }
+                    drag.style.left = position + 'px';
+                    break;
+                // 按了↓键
+                case 40:
+                    position = drag.style.top.replace(/px/g, '');
+                    deltaHeight = imgObj.height - drag.style.height.replace(/px/g, '');
+                    position++;
+                    if (position > deltaHeight) {
+                        position = deltaHeight;
+                    }
+                    drag.style.top = position + 'px';
+                    break;
+                // 按了enter键
+                case 13:
+                    clip(e);
+                    break;
+                default:
+                    console.log('keycode = ' + key);
+            }
         }
 
         function clip(e) {
