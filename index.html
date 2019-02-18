@@ -278,12 +278,12 @@
 
         // 遍历裁剪框缩放点对象
         for (var i = 0; i < dots.length; i++) {
-            dots[i].addEventListener('mousedown', function() {
-                console.log(this.className + ' mousedown');
-                this.addEventListener('mousemove', function() {
-                    console.log(this.className + ' mousemove');
-                });
-            });
+            dots[i].onmousedown = function(event) {
+                console.log('dot down');
+                box.onmousemove = function(event) {
+                    console.log('box move');
+                }
+            }
         }
 
         // 鼠标点击裁剪框
@@ -356,11 +356,12 @@
             };
         };
 
-        drag.addEventListener('mouseup', cancelBoxMove);
-        drag.addEventListener('touchend', cancelBoxMove);
-        drag.addEventListener('mouseout', cancelBoxMove);
-        function cancelBoxMove() {
-            box.onmousemove = null
+        drag.addEventListener('mouseup', cancelBoxMove.bind(this));
+        drag.addEventListener('touchend', cancelBoxMove.bind(this));
+        drag.addEventListener('mouseout', cancelBoxMove.bind(this));
+        function cancelBoxMove(e) {
+            e.stopPropagation();
+            box.onmousemove = null;
         }
 
         // 裁剪按钮、双击裁剪框、enter键裁剪
