@@ -277,8 +277,11 @@
 
         // 遍历裁剪框缩放点对象
         for (var i = 0; i < dots.length; i++) {
-            dots[i].addEventListener('click', function() {
-                console.log(this);
+            dots[i].addEventListener('mousedown', function() {
+                console.log(this.className + ' mousedown');
+                this.addEventListener('mousemove', function() {
+                    console.log(this.className + ' mousemove');
+                });
             });
         }
 
@@ -345,6 +348,9 @@
         // 鼠标点击裁剪框
         drag.onmousedown = function(event) {
             event.stopPropagation();
+            if (event.type == 'mousedown' && event.target != dotBox) {
+                return;
+            }
             var ev = event || window.event;
             var distanceX = ev.clientX - drag.offsetLeft;
             var distanceY = ev.clientY - drag.offsetTop;
@@ -352,6 +358,10 @@
             var top = 0;
             // 鼠标经过容器
             box.onmousemove = function(event) {
+                event.stopPropagation();
+                if (event.type == 'mousemove' && event.target != dotBox) {
+                    return;
+                }
                 var e = event || window.event;
                 left = e.clientX - distanceX;
                 top = e.clientY - distanceY;
@@ -373,6 +383,9 @@
         // 开始触碰裁剪框
         drag.ontouchstart = function(event) {
             event.stopPropagation();
+            if (event.type == 'touchstart' && event.target != dotBox) {
+                return;
+            }
             var ev = event || window.event;
             var distanceX = ev.touches[0].clientX - drag.offsetLeft;
             var distanceY = ev.touches[0].clientY - drag.offsetTop;
@@ -380,6 +393,10 @@
             var top = 0;
             // 触碰后移动裁剪框
             box.ontouchmove = function(event) {
+                event.stopPropagation();
+                if (event.type == 'touchmove' && event.target != dotBox) {
+                    return;
+                }
                 var e = event || window.event;
                 left = e.touches[0].clientX - distanceX;
                 top = e.touches[0].clientY - distanceY;
@@ -427,6 +444,7 @@
         }
 
         function clip(e) {
+            e.stopPropagation();
             // 若未双击事件，且目标非裁剪框时直接返回
             if (e.type == 'dblclick' && e.target != dotBox) {
                 return;
