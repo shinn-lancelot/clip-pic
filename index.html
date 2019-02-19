@@ -216,7 +216,7 @@
             cliped = false, // 是否已裁剪
             clipConfig = {  // 裁剪配置对象
                 scale: '',   // 设定初始裁剪框比例（宽 / 高）
-                fix: true   // 是否固定裁剪框比例
+                fix: false   // 是否固定裁剪框比例
             },
             imgScale;   // 图片自身的比例（宽 / 高）
             
@@ -287,29 +287,152 @@
                 var top = 0;
                 var width = 0;
                 var height = 0;
+                var oldTop = drag.offsetTop;
+                var deltaTop = 0;
+                var oldLeft = drag.offsetLeft;
+                var deltaLeft = 0;
                 box.onmousemove = function(event) {
                     var e = event || window.event;
                     left = e.clientX - distanceX;
                     top = e.clientY - distanceY;
-                    if (left <= 0) {
+
+                    deltaLeft = left - oldLeft;
+                    oldLeft = left;
+                    deltaTop = top - oldTop;
+                    oldTop = top;
+
+                    if (left < 0) {
                         left = 0;
-                    } else if (left >= (box.offsetWidth - drag.offsetWidth)) {
-                        left = box.offsetWidth - drag.offsetWidth;
+                    } else if (left > box.offsetWidth) {
+                        left = box.offsetWidth;
                     }
-                    if (top <= 0) {
+                    if (top < 0) {
                         top = 0;
-                    } else if (top >= (box.offsetHeight - drag.offsetHeight)) {
-                        top = box.offsetHeight - drag.offsetHeight;
+                    } else if (top > box.offsetHeight) {
+                        top = box.offsetHeight;
                     }
+
+                    width = Number(drag.style.width.replace(/px/g, ''));
+                    height = Number(drag.style.height.replace(/px/g, ''));
+
                     // 上
                     if (_this.className == 'up dot') {
                         if (clipConfig.fix) {
+                        } else {
+                            height -= deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+                            drag.style.top = top + 'px';
+                            drag.style.height = height + 'px';
+                        }
+                    // 右
+                    } else if (_this.className == 'right dot') {
+                        if (clipConfig.fix) {
+                        } else {
+                            width += deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            drag.style.width = width + 'px';
+                        }
+                    // 下
+                    } else if (_this.className == 'down dot') {
+                        if (clipConfig.fix) {
+                        } else {
+                            height += deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+                            drag.style.height = height + 'px';
+                        }
+                    // 左
+                    } else if (_this.className == 'left dot') {
+                        if (clipConfig.fix) {
+                        } else {
+                            width -= deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            drag.style.left = left + 'px';
+                            drag.style.width = width + 'px';
+                        }
+                    // 左上
+                    } else if (_this.className == 'left-up dot') {
+                        if (clipConfig.fix) {
+
+                        } else {
+                            width -= deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            height -= deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+
                             drag.style.left = left + 'px';
                             drag.style.top = top + 'px';
+                            drag.style.width = width + 'px';
+                            drag.style.height = height + 'px';
+                        }
+                    // 右上
+                    } else if (_this.className == 'right-up dot') {
+                        if (clipConfig.fix) {
+
                         } else {
+                            width += deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            height -= deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+
                             drag.style.top = top + 'px';
+                            drag.style.width = width + 'px';
+                            drag.style.height = height + 'px';
+                        }
+                    // 左下
+                    } else if (_this.className == 'left-down dot') {
+                        if (clipConfig.fix) {
+
+                        } else {
+                            width -= deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            height += deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+
+                            drag.style.left = left + 'px';
+                            drag.style.width = width + 'px';
+                            drag.style.height = height + 'px';
+                        }
+                    // 右下
+                    } else if (_this.className == 'right-down dot') {
+                        if (clipConfig.fix) {
+
+                        } else {
+                            width += deltaLeft;
+                            if (width > (box.offsetWidth - drag.offsetLeft)) {
+                                width = box.offsetWidth - drag.offsetLeft;
+                            }
+                            height += deltaTop;
+                            if (height > (box.offsetHeight - drag.offsetTop)) {
+                                height = box.offsetHeight - drag.offsetTop;
+                            }
+
+                            drag.style.width = width + 'px';
+                            drag.style.height = height + 'px';
                         }
                     }
+
+                    // 修正裁剪伸缩点的位置
+                    fixDotPosition();
                 }
             }
         }
@@ -334,14 +457,14 @@
                 var e = event || window.event;
                 left = e.clientX - distanceX;
                 top = e.clientY - distanceY;
-                if (left <= 0) {
+                if (left < 0) {
                     left = 0;
-                } else if (left >= (box.offsetWidth - drag.offsetWidth)) {
+                } else if (left > (box.offsetWidth - drag.offsetWidth)) {
                     left = box.offsetWidth - drag.offsetWidth;
                 }
-                if (top <= 0) {
+                if (top < 0) {
                     top = 0;
-                } else if (top >= (box.offsetHeight - drag.offsetHeight)) {
+                } else if (top > (box.offsetHeight - drag.offsetHeight)) {
                     top = box.offsetHeight - drag.offsetHeight;
                 }
                 drag.style.left = left + 'px';
@@ -369,14 +492,14 @@
                 var e = event || window.event;
                 left = e.touches[0].clientX - distanceX;
                 top = e.touches[0].clientY - distanceY;
-                if (left <= 0) {
+                if (left < 0) {
                     left = 0;
-                } else if (left >= (box.offsetWidth - drag.offsetWidth)) {
+                } else if (left > (box.offsetWidth - drag.offsetWidth)) {
                     left = box.offsetWidth - drag.offsetWidth;
                 }
-                if (top <= 0) {
+                if (top < 0) {
                     top = 0;
-                } else if (top >= (box.offsetHeight - drag.offsetHeight)) {
+                } else if (top > (box.offsetHeight - drag.offsetHeight)) {
                     top = box.offsetHeight - drag.offsetHeight;
                 }
                 drag.style.left = left + 'px';
@@ -488,6 +611,21 @@
             box.innerHTML = '';
             box.appendChild(newImg);
             btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href.split('\?')[0] + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
+        }
+
+        // 修正裁剪框伸缩点位的位置
+        function fixDotPosition() {
+            var upDownArr = ['up dot', 'down dot'];
+            var leftRightArr = ['left dot', 'right dot'];
+            var objClassName = '';
+            for (var i = 0; i < dots.length; i++) {
+                objClassName = dots[i].className;
+                if (upDownArr.indexOf(objClassName) >= 0) {
+                    dots[i].style.left = (Number(drag.style.width.replace(/px/g, '')) - 10) / 2 + 'px';
+                } else if (leftRightArr.indexOf(objClassName) >= 0) {
+                    dots[i].style.top = (Number(drag.style.height.replace(/px/g, '')) - 10) / 2 + 'px';
+                }
+            }
         }
     </script>
 </body>
