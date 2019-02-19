@@ -216,7 +216,7 @@
             cliped = false, // 是否已裁剪
             clipConfig = {  // 裁剪配置对象
                 scale: '',   // 设定初始裁剪框比例（宽 / 高）
-                fix: false   // 是否固定裁剪框比例
+                fixScale: false   // 是否固定裁剪框比例
             },
             imgScale;   // 图片自身的比例（宽 / 高）
             
@@ -244,21 +244,35 @@
                 drag.style.left = ((imgObj.width - imgObj.height * clipConfig.scale) / 2) + 'px';
                 drag.style.height = imgObj.height + 'px';
                 drag.style.width = (imgObj.height * clipConfig.scale) + 'px';
-
-                dotUp.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
-                dotDown.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
-                dotLeft.style.top = (imgObj.height - 10) / 2 + 'px';
-                dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
+                
+                if (!clipConfig.fixScale) {
+                    dotUp.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
+                    dotDown.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
+                    dotLeft.style.top = (imgObj.height - 10) / 2 + 'px';
+                    dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
+                } else {
+                    dotUp.style.display = 'none';
+                    dotDown.style.display = 'none';
+                    dotLeft.style.display = 'none';
+                    dotRight.style.display = 'none';
+                }
             } else {
                 drag.style.left = 0;
                 drag.style.top = ((imgObj.height - imgObj.width / clipConfig.scale) / 2) + 'px';
                 drag.style.width = imgObj.width + 'px';
                 drag.style.height = (imgObj.width / clipConfig.scale) + 'px';
                 
-                dotUp.style.left = (imgObj.width - 10) / 2 + 'px';
-                dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
-                dotLeft.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
-                dotRight.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
+                if (!clipConfig.fixScale) {
+                    dotUp.style.left = (imgObj.width - 10) / 2 + 'px';
+                    dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
+                    dotLeft.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
+                    dotRight.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
+                } else {
+                    dotUp.style.display = 'none';
+                    dotDown.style.display = 'none';
+                    dotLeft.style.display = 'none';
+                    dotRight.style.display = 'none';
+                }
             }
 
             // 获取裁剪坐标原点
@@ -317,8 +331,7 @@
 
                     // 上
                     if (_this.className == 'up dot') {
-                        if (clipConfig.fix) {
-                        } else {
+                        if (!clipConfig.fixScale) {
                             height -= deltaTop;
                             if (height > (box.offsetHeight - drag.offsetTop)) {
                                 height = box.offsetHeight - drag.offsetTop;
@@ -328,8 +341,7 @@
                         }
                     // 右
                     } else if (_this.className == 'right dot') {
-                        if (clipConfig.fix) {
-                        } else {
+                        if (!clipConfig.fixScale) {
                             width += deltaLeft;
                             if (width > (box.offsetWidth - drag.offsetLeft)) {
                                 width = box.offsetWidth - drag.offsetLeft;
@@ -338,8 +350,7 @@
                         }
                     // 下
                     } else if (_this.className == 'down dot') {
-                        if (clipConfig.fix) {
-                        } else {
+                        if (!clipConfig.fixScale) {
                             height += deltaTop;
                             if (height > (box.offsetHeight - drag.offsetTop)) {
                                 height = box.offsetHeight - drag.offsetTop;
@@ -348,8 +359,7 @@
                         }
                     // 左
                     } else if (_this.className == 'left dot') {
-                        if (clipConfig.fix) {
-                        } else {
+                        if (!clipConfig.fixScale) {
                             width -= deltaLeft;
                             if (width > (box.offsetWidth - drag.offsetLeft)) {
                                 width = box.offsetWidth - drag.offsetLeft;
@@ -359,7 +369,7 @@
                         }
                     // 左上
                     } else if (_this.className == 'left-up dot') {
-                        if (clipConfig.fix) {
+                        if (clipConfig.fixScale) {
 
                         } else {
                             width -= deltaLeft;
@@ -378,7 +388,7 @@
                         }
                     // 右上
                     } else if (_this.className == 'right-up dot') {
-                        if (clipConfig.fix) {
+                        if (clipConfig.fixScale) {
 
                         } else {
                             width += deltaLeft;
@@ -396,7 +406,7 @@
                         }
                     // 左下
                     } else if (_this.className == 'left-down dot') {
-                        if (clipConfig.fix) {
+                        if (clipConfig.fixScale) {
 
                         } else {
                             width -= deltaLeft;
@@ -414,7 +424,7 @@
                         }
                     // 右下
                     } else if (_this.className == 'right-down dot') {
-                        if (clipConfig.fix) {
+                        if (clipConfig.fixScale) {
 
                         } else {
                             width += deltaLeft;
