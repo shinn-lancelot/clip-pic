@@ -279,9 +279,37 @@
         // 遍历裁剪框缩放点对象
         for (var i = 0; i < dots.length; i++) {
             dots[i].onmousedown = function(event) {
-                console.log('dot down');
+                var _this = this;
+                var ev = event || window.event;
+                var distanceX = ev.clientX - drag.offsetLeft;
+                var distanceY = ev.clientY - drag.offsetTop;
+                var left = 0;
+                var top = 0;
+                var width = 0;
+                var height = 0;
                 box.onmousemove = function(event) {
-                    console.log('box move');
+                    var e = event || window.event;
+                    left = e.clientX - distanceX;
+                    top = e.clientY - distanceY;
+                    if (left <= 0) {
+                        left = 0;
+                    } else if (left >= (box.offsetWidth - drag.offsetWidth)) {
+                        left = box.offsetWidth - drag.offsetWidth;
+                    }
+                    if (top <= 0) {
+                        top = 0;
+                    } else if (top >= (box.offsetHeight - drag.offsetHeight)) {
+                        top = box.offsetHeight - drag.offsetHeight;
+                    }
+                    // 上
+                    if (_this.className == 'up dot') {
+                        if (clipConfig.fix) {
+                            drag.style.left = left + 'px';
+                            drag.style.top = top + 'px';
+                        } else {
+                            drag.style.top = top + 'px';
+                        }
+                    }
                 }
             }
         }
@@ -356,9 +384,10 @@
             };
         };
 
-        drag.addEventListener('mouseup', cancelBoxMove.bind(this));
-        drag.addEventListener('touchend', cancelBoxMove.bind(this));
-        drag.addEventListener('mouseout', cancelBoxMove.bind(this));
+        box.addEventListener('mouseup', cancelBoxMove.bind(this));
+        box.addEventListener('touchend', cancelBoxMove.bind(this));
+        wrapperObj.addEventListener('mouseup', cancelBoxMove.bind(this));
+        wrapperObj.addEventListener('touchend', cancelBoxMove.bind(this));
         function cancelBoxMove(e) {
             e.stopPropagation();
             box.onmousemove = null;
