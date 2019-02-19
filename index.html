@@ -291,7 +291,7 @@
                 var deltaTop = 0;
                 var oldLeft = drag.offsetLeft;
                 var deltaLeft = 0;
-                box.onmousemove = function(event) {
+                wrapperObj.onmousemove = function(event) {
                     var e = event || window.event;
                     left = e.clientX - distanceX;
                     top = e.clientY - distanceY;
@@ -449,11 +449,8 @@
             var left = 0;
             var top = 0;
             // 鼠标经过容器
-            box.onmousemove = function(event) {
+            wrapperObj.onmousemove = function(event) {
                 event.stopPropagation();
-                if (event.type == 'mousemove' && event.target != dotBox) {
-                    return;
-                }
                 var e = event || window.event;
                 left = e.clientX - distanceX;
                 top = e.clientY - distanceY;
@@ -484,11 +481,8 @@
             var left = 0;
             var top = 0;
             // 触碰后移动裁剪框
-            box.ontouchmove = function(event) {
+            wrapperObj.ontouchmove = function(event) {
                 event.stopPropagation();
-                if (event.type == 'touchmove' && event.target != dotBox) {
-                    return;
-                }
                 var e = event || window.event;
                 left = e.touches[0].clientX - distanceX;
                 top = e.touches[0].clientY - distanceY;
@@ -507,13 +501,11 @@
             };
         };
 
-        box.addEventListener('mouseup', cancelBoxMove.bind(this));
-        box.addEventListener('touchend', cancelBoxMove.bind(this));
-        wrapperObj.addEventListener('mouseup', cancelBoxMove.bind(this));
-        wrapperObj.addEventListener('touchend', cancelBoxMove.bind(this));
-        function cancelBoxMove(e) {
+        wrapperObj.addEventListener('mouseup', cancelWrapperObjMove.bind(this));
+        wrapperObj.addEventListener('touchend', cancelWrapperObjMove.bind(this));
+        function cancelWrapperObjMove(e) {
             e.stopPropagation();
-            box.onmousemove = null;
+            wrapperObj.onmousemove = null;
         }
 
         // 裁剪按钮、双击裁剪框、enter键裁剪
