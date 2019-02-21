@@ -216,7 +216,7 @@
             cliped = false, // 是否已裁剪
             clipConfig = {  // 裁剪配置对象
                 scale: 1 / 1,   // 设定初始裁剪框比例（宽 / 高）
-                fixScale: false   // 是否固定裁剪框比例
+                fixScale: true   // 是否固定裁剪框比例
             },
             imgScale;   // 图片自身的比例（宽 / 高）
             
@@ -301,14 +301,16 @@
                 var top = 0;
                 var width = 0;
                 var height = 0;
-                var originalTop = drag.offsetTop;
-                var deltaTop = 0;
-                var originalLeft = drag.offsetLeft;
                 var deltaLeft = 0;
-                var oldTop = originalTop;
-                var oldLeft = originalLeft;
+                var deltaTop = 0;
+                var oldLeft = drag.offsetLeft;
+                var oldTop = drag.offsetTop;
                 var moveWidth = 0;
                 var moveHeight = 0;
+                var originalLeft = drag.offsetLeft;
+                var originalTop = drag.offsetTop;
+                var originalWidth = Number(drag.style.width.replace(/px/g, ''));
+                var originalHeight = Number(drag.style.height.replace(/px/g, ''));
                 wrapperObj.onmousemove = function(event) {
                     var e = event || window.event;
                     left = e.clientX - distanceX;
@@ -320,22 +322,26 @@
                     oldTop = top;
                     moveWidth = left - originalLeft;    // 计算移动的宽度
                     moveHeight = top - originalTop;
-                    width = Number(drag.style.width.replace(/px/g, ''));    // 获取裁剪框宽度
-                    height = Number(drag.style.height.replace(/px/g, ''));
+                    
+                    if (clipConfig.fixScale == true) {
+                        // 计算移动后宽高比与裁剪框宽高比的大小。
+                        if ((moveWidth / moveHeight) > clipConfig.scale) {
+                            left =  moveHeight * clipConfig.scale + originalLeft;
+                            width = originalWidth - moveHeight * clipConfig.scale;
+                            height = originalHeight - moveHeight;
+                        } else if (((moveWidth / moveHeight) < clipConfig.scale)) {
+                            top = moveWidth / clipConfig.scale + originalTop;
+                            width = originalWidth - moveWidth;
+                            height = originalHeight - moveWidth / clipConfig.scale;
+                        } else {
+                            width = originalWidth - moveWidth;
+                            height = originalHeight - moveHeight;
+                        }
+                    } else {
+                        width = Number(drag.style.width.replace(/px/g, ''));    // 获取当前裁剪框宽度
+                        height = Number(drag.style.height.replace(/px/g, ''));
+                    }
 
-                    // // 计算移动后宽高比与裁剪框宽高比的大小。
-                    // if ((moveWidth / moveHeight) > clipConfig.scale) {
-                    //     left =  moveHeight * clipConfig.scale + originalLeft;
-                    //     width -= moveHeight * clipConfig.scale;
-                    //     height -= moveHeight;
-                    // } else if (((moveWidth / moveHeight) < clipConfig.scale)) {
-                    //     top = moveWidth / clipConfig.scale + originalTop;
-                    //     width -= moveWidth;
-                    //     height = moveWidth / clipConfig.scale;
-                    // }
-                    // console.log(width + '|' + height);
-
-                    // 判断left值合法性，限制最小最大值
                     if (left < 0) {
                         left = 0;
                     } else if (left > box.offsetWidth) {
@@ -345,6 +351,16 @@
                         top = 0;
                     } else if (top > box.offsetHeight) {
                         top = box.offsetHeight;
+                    }
+                    if (width < 0) {
+                        width = 0;
+                    } else if (width > box.offsetWidth) {
+                        width = box.offsetWidth;
+                    }
+                    if (height < 0) {
+                        height = 0;
+                    } else if (height > box.offsetHeight) {
+                        height = box.offsetHeight;
                     }
 
                     // 上
@@ -388,7 +404,14 @@
                     // 左上
                     } else if (_this.className == 'left-up dot') {
                         if (clipConfig.fixScale) {
-
+                            if (drag.style.top.replace(/px/g, '') > 0 && drag.style.top.replace(/px/g, '') < box.offsetHeight) {
+                                drag.style.left = left + 'px';
+                                drag.style.width = width + 'px';
+                            }
+                            if (drag.style.left.replace(/px/g, '') > 0 && drag.style.left.replace(/px/g, '') < box.offsetWidth) {
+                                drag.style.top = top + 'px';
+                                drag.style.height = height + 'px';
+                            }
                         } else {
                             width -= deltaLeft;
                             if (width > (box.offsetWidth - drag.offsetLeft)) {
