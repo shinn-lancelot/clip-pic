@@ -322,14 +322,14 @@
                     oldTop = top;
                     moveWidth = left - originalLeft;    // 计算移动的宽度
                     moveHeight = top - originalTop;
-                    
+
                     if (clipConfig.fixScale == true) {
                         // 计算移动后宽高比与裁剪框宽高比的大小。
-                        if ((moveWidth / moveHeight) > clipConfig.scale) {
+                        if (Math.abs(moveWidth / moveHeight) > clipConfig.scale) {
                             left =  moveHeight * clipConfig.scale + originalLeft;
                             width = originalWidth - moveHeight * clipConfig.scale;
                             height = originalHeight - moveHeight;
-                        } else if (((moveWidth / moveHeight) < clipConfig.scale)) {
+                        } else if ((Math.abs(moveWidth / moveHeight) < clipConfig.scale)) {
                             top = moveWidth / clipConfig.scale + originalTop;
                             width = originalWidth - moveWidth;
                             height = originalHeight - moveWidth / clipConfig.scale;
