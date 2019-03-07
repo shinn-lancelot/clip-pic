@@ -54,35 +54,11 @@ window.onload = function() {
         drag.style.left = ((imgObj.width - imgObj.height * clipConfig.scale) / 2) + 'px';
         drag.style.height = imgObj.height + 'px';
         drag.style.width = (imgObj.height * clipConfig.scale) + 'px';
-        
-        if (!clipConfig.fixScale) {
-            dotUp.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
-            dotDown.style.left = (imgObj.height * clipConfig.scale - 10) / 2 + 'px';
-            dotLeft.style.top = (imgObj.height - 10) / 2 + 'px';
-            dotRight.style.top = (imgObj.height - 10) / 2 + 'px';
-        } else {
-            dotUp.style.display = 'none';
-            dotDown.style.display = 'none';
-            dotLeft.style.display = 'none';
-            dotRight.style.display = 'none';
-        }
     } else {
         drag.style.left = 0;
         drag.style.top = ((imgObj.height - imgObj.width / clipConfig.scale) / 2) + 'px';
         drag.style.width = imgObj.width + 'px';
         drag.style.height = (imgObj.width / clipConfig.scale) + 'px';
-        
-        if (!clipConfig.fixScale) {
-            dotUp.style.left = (imgObj.width - 10) / 2 + 'px';
-            dotDown.style.left = (imgObj.width - 10) / 2 + 'px';
-            dotLeft.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
-            dotRight.style.top = (imgObj.width / clipConfig.scale - 10) / 2 + 'px';
-        } else {
-            dotUp.style.display = 'none';
-            dotDown.style.display = 'none';
-            dotLeft.style.display = 'none';
-            dotRight.style.display = 'none';
-        }
     }
 
     // 获取裁剪坐标原点
@@ -291,9 +267,6 @@ for (var i = 0; i < dots.length; i++) {
                     drag.style.height = height + 'px';
                 }
             }
-
-            // 修正裁剪伸缩点的位置
-            fixDotPosition();
         }
     }
 }
@@ -464,19 +437,4 @@ function clip(e) {
     box.innerHTML = '';
     box.appendChild(newImg);
     btnBox.innerHTML = '<div>Clip successed! <a href="' + window.location.href.split('\?')[0] + '?&t=' + new Date().getTime() + '">Try it once ?</a></div>';
-}
-
-// 修正裁剪框伸缩点位的位置
-function fixDotPosition() {
-    var upDownArr = ['up dot', 'down dot'];
-    var leftRightArr = ['left dot', 'right dot'];
-    var objClassName = '';
-    for (var i = 0; i < dots.length; i++) {
-        objClassName = dots[i].className;
-        if (upDownArr.indexOf(objClassName) >= 0) {
-            dots[i].style.left = (Number(drag.style.width.replace(/px/g, '')) - 10) / 2 + 'px';
-        } else if (leftRightArr.indexOf(objClassName) >= 0) {
-            dots[i].style.top = (Number(drag.style.height.replace(/px/g, '')) - 10) / 2 + 'px';
-        }
-    }
 }
