@@ -68,22 +68,26 @@ body {
 }
 .up {
     cursor: n-resize;
+    left: calc(50% - 5px);
     top: -5.5px;
 }
 
 .down {
     cursor: s-resize;
+    left: calc(50% - 5px);
     bottom: -5.5px;
 }
 
 .left {
     cursor: w-resize;
     left: -5.5px;
+    top: calc(50% - 5px);
 }
 
 .right {
     cursor: e-resize;
     right: -5.5px;
+    top: calc(50% - 5px);
 }
 
 .left-up {
