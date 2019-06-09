@@ -1,6 +1,8 @@
-## 裁剪图片demo
+## clip-pic
 
-[在线体验](https://clip-pic.netlify.com/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0e818554-9b60-49d7-be87-1a4b46a083d8/deploy-status)](https://app.netlify.com/sites/clip-pic/deploys)
+
+> A demo that uses canvas to crop a picture. 一个使用canvas裁剪图片的demo。
 
 ## TODO
 
